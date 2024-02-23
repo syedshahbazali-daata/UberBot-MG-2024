@@ -1,4 +1,8 @@
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
+import json
+import requests
+from BotFiles import bot
+import threading
 
 app = Flask(__name__)
 app.secret_key = '29832'
@@ -7,63 +11,145 @@ Flask.debug = True
 selected_mode = "light"
 
 
+# Basic Functions
+def read_json_file(file_path):
+    try:
+        with open(file_path, 'r', encoding='utf-8') as file:
+            data = json.load(file)
+            return data
+    except:
+        print("Error in reading file")
+        return None
+
+
+def write_json_file(file_path, data):
+    try:
+        with open(file_path, 'w') as file:
+            json.dump(data, file, indent=4)
+    except:
+        print("Error in writing file")
+        pass
+
+
+def get_users_data():
+    try:
+        res = requests.get('https://65d7cd1627d9a3bc1d7bcfc3.mockapi.io/api/usersData')
+        return res.json()
+    except Exception as e:
+        print(e)
+        return None
+
+
+def confirm_account(email, company, telegram_api, telegram_password):
+    all_registered_user = get_users_data()
+    all_emails = [user['email'].lower().strip() for user in all_registered_user]
+    if email.lower().strip() in all_emails:
+        user_data = read_json_file('./static/assets/userData.json')
+        user_data['email'] = email
+        user_data['company-name'] = company
+        user_data['telegram-api'] = telegram_api
+        user_data['telegram-password'] = telegram_password
+        write_json_file('./static/assets/userData.json', user_data)
+        return True
+    return False
+
+
+user_data = read_json_file('./static/assets/userData.json')
+user_data['bot-status'] = "Stopped"
+write_json_file('./static/assets/userData.json', user_data)
+
 @app.route('/')
 def index():
-
     return redirect(url_for('dashboard'))
 
 
 @app.route('/dashboard')
 def dashboard():
-    print(session)
+    user_data = read_json_file('./static/assets/userData.json')
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
+    if user_data['email'] == "":
+        return redirect(url_for('profile'))
+
     data = {
         "active": "dashboard",
-        "selectedMode": selected_mode
+        "selectedMode": selected_mode,
+        "user": user_data,
+        "attachAccount": attach_account
     }
 
     return render_template('index.html', data=data)
 
 
-@app.route('/profile')
+@app.route('/profile', methods=['POST', 'GET'])
 def profile():
+    user_data = read_json_file('./static/assets/userData.json')
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
     data = {
-        "active": "profile",
-        "selectedMode": selected_mode
+        "active": "dashboard",
+        "selectedMode": selected_mode,
+        "user": user_data,
+        "attachAccount": attach_account
     }
+
+    if request.method == 'POST':
+        email = request.form['email']
+        company = request.form['company']
+        telegram_api = request.form['telegram-api']
+        telegram_password = request.form['telegram-password']
+        if confirm_account(email, company, telegram_api, telegram_password):
+            return redirect(url_for('dashboard'))
+        else:
+            # show error
+            return redirect(url_for('profile'))
+
     return render_template('index.html', data=data)
 
 
 @app.route('/history')
 def history():
-    data = {
-        "active": "history",
-        "selectedMode": selected_mode
+    user_data = read_json_file('./static/assets/userData.json')
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
+    if user_data['email'] == "":
+        return redirect(url_for('profile'))
 
+    data = {
+        "active": "dashboard",
+        "selectedMode": selected_mode,
+        "user": user_data,
+        "attachAccount": attach_account
     }
     return render_template('index.html', data=data)
 
 
 @app.route('/drivers')
 def drivers():
+    user_data = read_json_file('./static/assets/userData.json')
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
+    if user_data['email'] == "":
+        return redirect(url_for('profile'))
+
     data = {
-        "active": "drivers",
-        "selectedMode": selected_mode
+        "active": "dashboard",
+        "selectedMode": selected_mode,
+        "user": user_data,
+        "attachAccount": attach_account
     }
     return render_template('index.html', data=data)
 
 
 @app.route('/settings')
 def settings():
-    data = {
-        "active": "settings"
-    }
-    return render_template('index.html', data=data)
+    user_data = read_json_file('./static/assets/userData.json')
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
+    print(attach_account, "attach_account")
+    if user_data['email'] == "":
+        return redirect(url_for('profile'))
 
-
-@app.route('/logout')
-def logout():
     data = {
-        "active": "logout"
+        "active": "dashboard",
+        "selectedMode": selected_mode,
+        "user": user_data,
+        "attachAccount": attach_account
     }
     return render_template('index.html', data=data)
 
@@ -78,6 +164,31 @@ def switch_mode():
         return jsonify({"status": "success", "mode": selected_mode})
 
     return jsonify({"status": "success", "mode": selected_mode})
+
+
+@app.route('/start-bot')
+def start_bot():
+    user_data = read_json_file('./static/assets/userData.json')
+    if user_data['bot-status'] == "Running":
+        user_data['bot-status'] = "Stopped"
+    else:
+        user_data['bot-status'] = "Running"
+
+    write_json_file('./static/assets/userData.json', user_data)
+    return 'Bot Status: ' + user_data['bot-status']
+
+
+@app.route('/attach-account')
+def add_account():
+    threading.Thread(target=bot.check_uber_account_attached).start()
+    return 'Account is being attached'
+
+@app.route('/remove-account')
+def remove_account():
+    attach_account = read_json_file('./BotFiles/attachAccount.json')
+    attach_account['attached'] = False
+    write_json_file('./BotFiles/attachAccount.json', attach_account)
+    return 'Account is being removed'
 
 
 app.run(debug=True, host='0.0.0.0', port=5000)

@@ -148,11 +148,14 @@ Settings
         </div>
 
         <div class="row" style="align-items: center; justify-content: center; margin-top: 20px">
-            <button class="btn btn-primary mt-4 custom-text-color" style="width: 150px;border-radius: 50px;">Start
+            <button class="btn mt-4 custom-text-color" style="width: 150px;border-radius: 50px;"
+                    id="start-bot-btn"
+            >Start
             </button>
             {# #695CFE or #FF6B6B #}
-            <p class="text-center mt-2 custom-text-color" style="margin: 0 20px">Bot Status: <span
-                    style="color: #695CFE">Running</span></p>
+            <p class="text-center mt-2 custom-text-color" style="margin: 0 20px">Bot Status: <span id="bot-status"
+                                                                                                   style="color: #695CFE">Running</span>
+            </p>
         </div>
 
         <div class="row">
@@ -182,24 +185,30 @@ Settings
 
     <div style="width: 100%; height: 40%; padding: 30px 60px">
         <h1 class="text">Profile</h1>
-        <form>
+        <form method="POST">
             <div class="form-group mb-2">
                 <label class="custom-text-color" for="email-id">Email address</label>
-                <input type="email" class="form-control" id="email-id" aria-describedby="emailHelp" autofocus
+                <input type="email" class="form-control" id="email-id" aria-describedby="emailHelp" autofocus required
+                       name="email"
                        placeholder="Enter email">
 
             </div>
             <div class="form-group mb-2">
                 <label class="custom-text-color" for="company-name">Company Name</label>
-                <input type="text" class="form-control" id="company-name" placeholder="Enter Company Name">
+                <input type="text" class="form-control" id="company-name" placeholder="Enter Company Name" required
+                       name="company"
+                >
             </div>
             <div class="form-group mb-2">
-                <label class="custom-text-color" for="telegram-api">Telegram API</label>
-                <input type="text" class="form-control" id="telegram-api" placeholder="Enter Telegram API">
+                <label class="custom-text-color" for="telegram-api"
+                >Telegram API</label>
+                <input type="text" class="form-control" id="telegram-api" placeholder="Enter Telegram API" required
+                       name="telegram-api">
             </div>
             <div class="form-group mb-2">
                 <label class="custom-text-color" for="telegram-password">Telegram Bot Password</label>
-                <input type="password" class="form-control" id="telegram-password"
+                <input class="form-control" id="telegram-password" minlength="6" required
+                       name="telegram-password"
                        placeholder="Enter Telegram Bot Password">
             </div>
 
@@ -247,7 +256,25 @@ Settings
     </div>
 </section>
 <section class="user-settings-section">
-    <div class="text">Settings Sidebar</div>
+    <div style="width: 100%; height: 40%; padding: 30px 60px">
+        <h1 class="text">Settings</h1>
+        <h1 class="text text-center" style="color: #695CFE">UberFleet Attach Account</h1>
+        <div style="display: flex; align-items: center; justify-content: center; flex-direction: column">
+
+
+            <button id="attach-account-btn" class="btn btn-primary mt-4 custom-text-color" style="border-radius: 50px;">
+                Attach Account
+            </button>
+
+            <button id="remove-attach-btn" class="btn btn-danger mt-4 custom-text-color"
+                    style="border-radius: 50px">Remove Old Account
+            </button>
+
+
+        </div>
+
+
+    </div>
 </section>
 
 
@@ -285,6 +312,45 @@ Settings
     }
 
 
+    // user data
+    const user_email_id = '{{ data['user']['email'] }}';
+    const user_company_name = '{{ data['user']['company'] }}';
+    const user_telegram_api = '{{ data['user']['telegram-api'] }}';
+    const user_telegram_password = '{{ data['user']['telegram-password'] }}';
+    const bot_status = '{{ data['user']['bot-status'] }}';
+
+    document.getElementById('email-id').value = user_email_id;
+    document.getElementById('company-name').value = user_company_name;
+    document.getElementById('telegram-api').value = user_telegram_api;
+    document.getElementById('telegram-password').value = user_telegram_password;
+    document.getElementById('bot-status').innerText = bot_status;
+
+    console.log(bot_status);
+
+    // if bot is running then change the color to green else red
+    if (bot_status === "Running") {
+        document.getElementById('bot-status').style.color = "#695CFE";
+        document.getElementById('start-bot-btn').innerText = "Stop";
+        document.getElementById('start-bot-btn').style.backgroundColor = "#FF6B6B";
+    } else {
+        document.getElementById('bot-status').style.color = "#FF6B6B";
+        document.getElementById('start-bot-btn').innerText = "Start";
+        document.getElementById('start-bot-btn').style.backgroundColor = "#695CFE";
+    }
+
+
+    // hide remove account button if account is not attached
+    const is_account_attached = '{{ data['attachAccount']['attached'] }}';
+    console.log(is_account_attached);
+    if (is_account_attached === "True") {
+        document.getElementById('attach-account-btn').style.display = "none";
+        document.getElementById('remove-attach-btn').style.display = "block";
+    } else {
+        document.getElementById('attach-account-btn').style.display = "block";
+        document.getElementById('remove-attach-btn').style.display = "none";
+    }
+
+
 </script>
 
 
@@ -301,3 +367,4 @@ Settings
         crossorigin="anonymous"></script>
 </body>
 </html>
+
