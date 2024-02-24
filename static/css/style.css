@@ -330,3 +330,17 @@ body.dark .custom-text-color
 }
 
 
+
+.my-custom-scrollbar {
+position: relative;
+min-height: 200px;
+max-height: 400px;
+overflow: auto;
+}
+.table-wrapper-scroll-y {
+display: block;
+}
+
+.table {
+    font-size: 12px;
+}

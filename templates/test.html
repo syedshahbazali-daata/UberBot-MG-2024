@@ -10,14 +10,100 @@
 <body>
 <h1>Hello, world!</h1>
 <table class="table">
-    <thead>
-    <tr>
-        <th scope="col">ID</th>
-        <th scope="col">Name</th>
-        <th scope="col">Email</th>
+    <thead class="MuiTableHead-root">
+    <tr class="MuiTableRow-root MuiTableRow-head">
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Accept</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Price</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Pickup address</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Dropoff address</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Rider</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Suggested driver</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Date</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Time</div>
+            </div>
+        </th>
+        <th class="MuiTableCell-root MuiTableCell-head _css-fdRpuu MuiTableCell-paddingNone" scope="col">
+            <div class="_css-fwruea">
+                <div class="_css-kWxkIH">Decline</div>
+            </div>
+        </th>
     </tr>
     </thead>
     <tbody class="MuiTableBody-root">
+    <tr class="MuiTableRow-root">
+        <td class="MuiTableCell-root MuiTableCell-body _css-jFEBsI">
+            <button data-baseweb="button" data-testid="accept-btn" class="_css-fBvEmy _css-jWnSEI">
+                <div class="_css-hdjfHk">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" data-baseweb="icon"><title>
+                        Check</title>
+                        <path d="m9 20.1-8.1-8 2.2-2.2 5.9 6 11.9-12 2.2 2.2L9 20.1Z" fill="currentColor"></path>
+                    </svg>
+                </div>
+            </button>
+            <div class="_css-fYhPvT">
+                <div style="position: relative;">
+                    <div style="border: 5px solid rgb(179, 179, 179); border-radius: 32px; height: 32px; margin: 16px; position: absolute; width: 32px;"></div>
+                    <div class="MuiCircularProgress-root MuiCircularProgress-colorPrimary MuiCircularProgress-static"
+                         role="progressbar" aria-valuenow="83"
+                         style="width: 42px; height: 42px; transform: rotate(-90deg); color: rgb(240, 240, 240); margin: 16px; z-index: 2;">
+                        <svg class="MuiCircularProgress-svg" viewBox="22 22 44 44">
+                            <circle class="MuiCircularProgress-circle MuiCircularProgress-circleStatic" cx="44" cy="44"
+                                    r="19.5" fill="none" stroke-width="5"
+                                    style="stroke-dasharray: 122.522; stroke-dashoffset: 21.004px;"></circle>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-fHeobO">10,28&nbsp;€</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">Am Kirschbäumchen, 41466 Neuss, Deutschland</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">Rheydter Str. 112, 41464 Neuss, Deutschland</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">Julia</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">Jamil</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">02/24/2024</td>
+        <td class="MuiTableCell-root MuiTableCell-body _css-jMvqCi">03:54</td>
+        <td class="MuiTableCell-root MuiTableCell-body">
+            <button data-baseweb="button" data-testid="decline-btn" class="_css-euMjyW _css-hHYcif">
+                <div class="_css-hdjfHk">
+                    <svg width="1em" height="1em" viewBox="0 0 24 24" fill="none" data-baseweb="icon"><title>
+                        Delete</title>
+                        <path d="m18.1 8.1-2.2-2.2-3.9 4-3.9-4-2.2 2.2 4 3.9-4 3.9 2.2 2.2 3.9-4 3.9 4 2.2-2.2-4-3.9 4-3.9Z"
+                              fill="currentColor"></path>
+                    </svg>
+                </div>
+            </button>
+        </td>
+    </tr>
     <tr class="MuiTableRow-root">
         <td class="MuiTableCell-root MuiTableCell-body _css-jFEBsI">
             <button data-baseweb="button" data-testid="accept-btn" class="_css-fBvEmy _css-jWnSEI">

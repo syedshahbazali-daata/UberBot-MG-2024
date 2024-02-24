@@ -6,7 +6,8 @@ const body = document.querySelector('body'),
     runBtn = body.querySelector("#start-bot-btn"),
     attachAccountBtn = body.querySelector("#attach-account-btn"),
     removeAccountBtn = document.getElementById("remove-attach-btn");
-    selectedMode = body.querySelector(".selectedMode").innerText
+deleteHistoryBtn = document.getElementById("delete-history-btn");
+selectedMode = body.querySelector(".selectedMode").innerText
 
 modeText = body.querySelector(".mode-text");
 
@@ -103,7 +104,6 @@ attachAccountBtn.addEventListener("click", () => {
 })
 
 
-
 removeAccountBtn.addEventListener("click", () => {
     fetch('/remove-account', {
         method: 'GET',
@@ -120,4 +120,25 @@ removeAccountBtn.addEventListener("click", () => {
         });
 
 
+})
+
+
+// on click of delete history button ask for confirmation and then go to /delete-history
+deleteHistoryBtn.addEventListener("click", () => {
+    let confirmDelete = confirm("Are you sure you want to delete the history?");
+    if (confirmDelete) {
+        fetch('/delete-history', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }).then(response => response.text())
+            .then(data => {
+                window.location.reload();
+                console.log(data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
 })

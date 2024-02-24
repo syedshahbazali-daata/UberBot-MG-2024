@@ -1,7 +1,8 @@
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
-import json
 import requests
-from BotFiles import bot
+from BotFiles import bot, telegramBot
+from BotFiles.generalFunctions import *
+
 import threading
 
 app = Flask(__name__)
@@ -9,26 +10,6 @@ app.secret_key = '29832'
 
 Flask.debug = True
 selected_mode = "light"
-
-
-# Basic Functions
-def read_json_file(file_path):
-    try:
-        with open(file_path, 'r', encoding='utf-8') as file:
-            data = json.load(file)
-            return data
-    except:
-        print("Error in reading file")
-        return None
-
-
-def write_json_file(file_path, data):
-    try:
-        with open(file_path, 'w') as file:
-            json.dump(data, file, indent=4)
-    except:
-        print("Error in writing file")
-        pass
 
 
 def get_users_data():
@@ -57,6 +38,7 @@ def confirm_account(email, company, telegram_api, telegram_password):
 user_data = read_json_file('./static/assets/userData.json')
 user_data['bot-status'] = "Stopped"
 write_json_file('./static/assets/userData.json', user_data)
+
 
 @app.route('/')
 def index():
@@ -173,6 +155,8 @@ def start_bot():
         user_data['bot-status'] = "Stopped"
     else:
         user_data['bot-status'] = "Running"
+        threading.Thread(target=telegramBot.telegram_bot).start()
+        threading.Thread(target=bot.start_bot).start()
 
     write_json_file('./static/assets/userData.json', user_data)
     return 'Bot Status: ' + user_data['bot-status']
@@ -183,6 +167,7 @@ def add_account():
     threading.Thread(target=bot.check_uber_account_attached).start()
     return 'Account is being attached'
 
+
 @app.route('/remove-account')
 def remove_account():
     attach_account = read_json_file('./BotFiles/attachAccount.json')
@@ -191,4 +176,15 @@ def remove_account():
     return 'Account is being removed'
 
 
-app.run(debug=True, host='0.0.0.0', port=5000)
+@app.route('/delete-history')
+def delete_history():
+    user_data = read_json_file('./static/assets/userData.json')
+    user_data['history'] = []
+    write_json_file('./static/assets/userData.json', user_data)
+    return redirect(url_for('history'))
+
+
+
+
+
+app.run(debug=False, host='0.0.0.0', port=5000)
