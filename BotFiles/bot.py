@@ -1,16 +1,14 @@
 from selenium import webdriver
 import os
 import requests
-
 from selenium.webdriver.common.by import By
-
 from .generalFunctions import *
 import time
 
 # current path
 
-# USER_DIR = os.path.join(os.getcwd(), "BotFiles", "UserDir")
-USER_DIR = r"C:\Users\hp\PycharmProjects\MG BOT - Al karwani\test\USER_DIR"
+USER_DIR = os.path.join(os.getcwd(), "BotFiles", "UserDir")
+# USER_DIR = r"C:\Users\hp\PycharmProjects\MG BOT - Al karwani\test\USER_DIR"
 BASE_DIR = os.path.join(os.getcwd(), "BotFiles")
 BOT_RUNNING = False
 print(USER_DIR)

@@ -431,6 +431,19 @@ Settings
         }, 60000);
     }
 
+    let time_to_refresh = 30 * (10 * 1000);
+    // go to dashboard after every 30 minutes
+    setInterval(() => {
+
+        window.location.href = "/";
+    }, time_to_refresh);
+
+
+    var is_attached_account = '{{ data['attachAccount']['attached'] }}';
+
+
+
+
 
 </script>
 

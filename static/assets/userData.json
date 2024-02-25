@@ -1,16 +1,10 @@
 {
-    "email": "shahbazali@gmail.com",
-    "company-name": "Student",
-    "telegram-api": "5439198090:AAFMK_6PvMSh8AKP38w9Xaf_4MyED1xJ1Vs",
-    "telegram-password": "Adskosd",
-    "bot-status": "Running",
+    "email": "",
+    "company-name": "",
+    "telegram-api": "",
+    "telegram-password": "",
+    "bot-status": "Stopped",
     "messages-sent": 0,
-    "drivers": [
-        {
-            "chat_id": 1868271284,
-            "surname": "Ressan",
-            "date": "2024-02-25 03:49:22"
-        }
-    ],
+    "drivers": [],
     "history": []
 }

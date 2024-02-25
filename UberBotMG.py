@@ -1,8 +1,12 @@
+from datetime import datetime
+
 from flask import Flask, session, redirect, url_for, request, render_template, jsonify
 import requests
 from BotFiles import bot, telegramBot
 from BotFiles.generalFunctions import *
-
+import shutil
+import os
+import webview
 import threading
 
 app = Flask(__name__)
@@ -10,11 +14,27 @@ app.secret_key = '29832'
 
 Flask.debug = True
 selected_mode = "light"
+ADMIN = False
 
 
 def get_users_data():
     try:
         res = requests.get('https://65d7cd1627d9a3bc1d7bcfc3.mockapi.io/api/usersData')
+        return res.json()
+    except Exception as e:
+        print(e)
+        return None
+
+
+def add_user_data(email, company):
+    try:
+        data = {
+            "email": email.lower(),
+            "company": company.title(),
+            "current_date": datetime.now().strftime("%d-%m-%Y %H:%M:%S"),
+            "joining_date": ""
+        }
+        res = requests.post('https://65d7cd1627d9a3bc1d7bcfc3.mockapi.io/api/usersData', data=data)
         return res.json()
     except Exception as e:
         print(e)
@@ -42,13 +62,40 @@ write_json_file('./static/assets/userData.json', user_data)
 
 @app.route('/')
 def index():
-    return redirect(url_for('dashboard'))
+    if ADMIN:
+        return redirect(url_for('admin_manage_users'))
+    user_data = read_json_file('./static/assets/userData.json')
+    all_registered_user = get_users_data()
+    all_emails = [user['email'].lower().strip() for user in all_registered_user]
+    if user_data['email'] != "" and user_data['email'].lower().strip() in all_emails:
+        return redirect(url_for('dashboard'))
+    elif user_data['email'].lower().strip() not in all_emails:
+        user_data['email'] = ""
+        user_data['company-name'] = ""
+        user_data['telegram-api'] = ""
+        user_data['telegram-password'] = ""
+        # messages-sent,drivers,history
+        user_data['messages-sent'] = 0
+        user_data['drivers'] = []
+        user_data['history'] = []
+        # attachAccount
+        attach_account = read_json_file('./BotFiles/attachAccount.json')
+        attach_account['attached'] = False
+        write_json_file('./BotFiles/attachAccount.json', attach_account)
+        write_json_file('./static/assets/userData.json', user_data)
+
+        # delete userDir
+        shutil.rmtree(os.path.join(os.getcwd(), "BotFiles", "userDir"), ignore_errors=True)
+        # create new userDir
+        os.mkdir(os.path.join(os.getcwd(), "BotFiles", "userDir"))
+
+    return redirect(url_for('profile'))
 
 
 @app.route('/dashboard')
 def dashboard():
-    user_data = read_json_file('./static/assets/userData.json')
     attach_account = read_json_file('./BotFiles/attachAccount.json')
+    user_data = read_json_file('./static/assets/userData.json')
     if user_data['email'] == "":
         return redirect(url_for('profile'))
 
@@ -136,6 +183,41 @@ def settings():
     return render_template('index.html', data=data)
 
 
+# ADMIN PANEL
+
+
+@app.route('/admin-manage-users')
+def admin_manage_users():
+    all_registered_user = get_users_data()
+    data = {
+        "allRegisteredUser": all_registered_user
+    }
+
+    return render_template('admin.html', data=data)
+
+
+@app.route('/admin-add-user', methods=['POST', 'GET'])
+def admin_add_user():
+    all_registered_user = get_users_data()
+    all_registered_user_emails = [user['email'].lower().strip() for user in all_registered_user]
+    data = {
+        "allRegisteredUser": all_registered_user,
+        "allRegisteredUserEmails": all_registered_user_emails
+    }
+
+    if request.method == 'POST':
+        email = request.form['email']
+        company = request.form['company']
+        if email.lower().strip() not in all_registered_user_emails and email != "":
+            add_user_data(email, company)
+            return redirect(url_for('admin_manage_users'))
+        else:
+            # show error
+            return redirect(url_for('admin_add_user'))
+
+    return render_template('admin.html', data=data)
+
+
 # backendRoutes
 @app.route('/switch-mode', methods=['POST', 'GET'])
 def switch_mode():
@@ -184,7 +266,16 @@ def delete_history():
     return redirect(url_for('history'))
 
 
+@app.route('/delete-user/<user_id>')
+def delete_user(user_id):
+    try:
+        requests.delete(f'https://65d7cd1627d9a3bc1d7bcfc3.mockapi.io/api/usersData/{user_id}')
+        return redirect(url_for('admin_manage_users'))
+    except Exception as e:
+        print(e)
+        return None
 
 
-
-app.run(debug=False, host='0.0.0.0', port=5000)
+# app.run(debug=True, port=5000)
+webview.create_window('UberBotMG', app, width=1200, height=800, maximized=True)
+webview.start()

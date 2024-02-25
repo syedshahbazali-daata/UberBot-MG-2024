@@ -9,6 +9,7 @@ const body = document.querySelector('body'),
 deleteHistoryBtn = document.getElementById("delete-history-btn");
 selectedMode = body.querySelector(".selectedMode").innerText
 
+
 modeText = body.querySelector(".mode-text");
 
 console.log(selectedMode);
@@ -67,6 +68,11 @@ modeSwitch.addEventListener("click", () => {
 
 
 runBtn.addEventListener("click", () => {
+    if (is_attached_account === "False") {
+        alert("Please attach your Uber account to the bot first");
+        window.location.href = "/settings";
+        return;
+    }
     fetch('/start-bot', {
         method: 'GET',
         headers: {
@@ -93,7 +99,7 @@ attachAccountBtn.addEventListener("click", () => {
         },
     }).then(response => response.text())
         .then(data => {
-            alert("Attach your account to the bot and then press ok to continue");
+            confirm("Please login to your Uber account and then click OK to attach your account to the bot.");
             window.location.reload();
 
 
