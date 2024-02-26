@@ -100,6 +100,7 @@ attachAccountBtn.addEventListener("click", () => {
     }).then(response => response.text())
         .then(data => {
             confirm("Please login to your Uber account and then click OK to attach your account to the bot.");
+
             window.location.reload();
 
 
