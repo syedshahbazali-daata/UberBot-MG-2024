@@ -1,8 +1,8 @@
 {
-    "email": "",
-    "company-name": "",
-    "telegram-api": "",
-    "telegram-password": "",
+    "email": "test@gmail.com",
+    "company-name": "sdsd",
+    "telegram-api": "msdkmds",
+    "telegram-password": "sfdfkfmd",
     "bot-status": "Stopped",
     "messages-sent": 0,
     "drivers": [],

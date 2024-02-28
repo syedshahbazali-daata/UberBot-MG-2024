@@ -99,9 +99,24 @@ attachAccountBtn.addEventListener("click", () => {
         },
     }).then(response => response.text())
         .then(data => {
-            confirm("Please login to your Uber account and then click OK to attach your account to the bot.");
+            const user_response = confirm("Please login to your Uber account and then click OK to attach your account to the bot.");
+            if (user_response) {
+                fetch('/confirm-attach-account', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
 
-            window.location.reload();
+                }).then(
+                    response => response.text()
+                ).then(data => {
+                    window.location.reload();
+                })
+
+
+            } else {
+                window.location.reload();
+            }
 
 
         })

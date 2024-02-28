@@ -244,12 +244,19 @@ def start_bot():
     return 'Bot Status: ' + user_data['bot-status']
 
 
-@app.route('/attach-account')
-def add_account():
-    threading.Thread(target=bot.check_uber_account_attached).start()
+@app.route('/confirm-attach-account')
+def confirm_attach_account():
     attach_account = read_json_file('./BotFiles/attachAccount.json')
     attach_account['attached'] = True
     write_json_file('./BotFiles/attachAccount.json', attach_account)
+    return 'Account is attached'
+
+
+
+@app.route('/attach-account')
+def add_account():
+    threading.Thread(target=bot.check_uber_account_attached).start()
+
     return 'Account is being attached'
 
 
